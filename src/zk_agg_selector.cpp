@@ -26,9 +26,15 @@ bool RandomAggSelector::selectScribeAggregator(struct String_vector& hostNames,
     int randomInt = rand() % hostNames.count;
     string remoteScribeZnode = hostNames.data[randomInt];
     size_t index = remoteScribeZnode.find(":");
-    remoteHost = remoteScribeZnode.substr(0, index);
-    string port = remoteScribeZnode.substr(index+1, string::npos);
-    remotePort = static_cast<unsigned long>(atol(port.c_str()));
+    if (index == string::npos) {
+      remoteHost = remoteScribeZnode;
+      remotePort = 1464;
+    }
+    else {
+      remoteHost = remoteScribeZnode.substr(0, index);
+      string port = remoteScribeZnode.substr(index+1, string::npos);
+      remotePort = static_cast<unsigned long>(atol(port.c_str()));
+    }
     LOG_DEBUG("Selected remote scribe %s:%lu", remoteHost.c_str(), remotePort);
     return true;
   }
